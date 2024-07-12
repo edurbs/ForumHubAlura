@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://topicoListView.title"
+      focusComponent="topicoesDataGrid">
+    <data>
+        <collection id="topicoesDc"
+                    class="com.company.forumhubalura.entity.Topico">
+            <fetchPlan extends="_base"/>
+            <loader id="topicoesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Topico e]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="topicoDc"
+                  class="com.company.forumhubalura.entity.Topico">
+            <fetchPlan extends="_base">
+                <property name="autor" fetchPlan="_base">
+                    <property name="perfis" fetchPlan="_base"/>
+                </property>
+                <property name="curso" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="topicoDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout padding="false">
+        <formLayout id="layoutWrapper" classNames="master-detail-layout" height="100%">
+            <vbox id="listLayout" height="100%">
+                <genericFilter id="genericFilter"
+                               dataLoader="topicoesDl">
+                    <properties include=".*"/>
+                </genericFilter>
+                <hbox id="buttonsPanel" classNames="buttons-panel">
+                    <button id="createBtn" action="topicoesDataGrid.create"/>
+                    <button id="editBtn" action="topicoesDataGrid.edit"/>
+                    <button id="removeBtn" action="topicoesDataGrid.remove"/>
+                    <simplePagination id="pagination" dataLoader="topicoesDl"/>
+                </hbox>
+                <dataGrid id="topicoesDataGrid"
+                          width="100%"
+                          minHeight="20em"
+                          dataContainer="topicoesDc"
+                          columnReorderingAllowed="true">
+                    <actions>
+                        <action id="create" type="list_create"/>
+                        <action id="edit" type="list_edit"/>
+                        <action id="remove" type="list_remove"/>
+                    </actions>
+                    <columns resizable="true">
+                        <column property="titulo"/>
+                        <column property="mensagem"/>
+                        <column property="status"/>
+                        <column property="respostas"/>
+                    </columns>
+                </dataGrid>
+                <hbox id="lookupActions" visible="false">
+                    <button id="selectBtn" action="selectAction"/>
+                    <button id="discardBtn" action="discardAction"/>
+                </hbox>
+            </vbox>
+            <vbox id="detailsLayout" height="100%">
+                <formLayout id="form" dataContainer="topicoDc">
+                    <textField id="tituloField" property="titulo"/>
+                    <textField id="mensagemField" property="mensagem"/>
+                    <textField id="statusField" property="status"/>
+                    <entityPicker id="autorField" property="autor">
+                        <actions>
+                            <action id="entityLookup" type="entity_lookup"/>
+                            <action id="entityClear" type="entity_clear"/>
+                        </actions>
+                    </entityPicker>
+                    <entityPicker id="cursoField" property="curso">
+                        <actions>
+                            <action id="entityLookup" type="entity_lookup"/>
+                            <action id="entityClear" type="entity_clear"/>
+                        </actions>
+                    </entityPicker>
+                    <textField id="respostasField" property="respostas"/>
+                </formLayout>
+                <hbox id="detailActions">
+                    <button id="saveBtn" text="msg:///actions.Save" icon="CHECK" themeNames="primary"/>
+                    <button id="cancelBtn" text="msg:///actions.Cancel" icon="BAN"/>
+                </hbox>
+            </vbox>
+        </formLayout>
+    </layout>
+</view>
